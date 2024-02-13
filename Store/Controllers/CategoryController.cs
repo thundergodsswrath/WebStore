@@ -1,12 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
+using Store.Data;
+using Store.Models;
 
 namespace Store.Controllers;
 
 public class CategoryController : Controller
 {
-    // GET
+    private readonly ApplicationDbContext _db;
+    public CategoryController(ApplicationDbContext db)
+    {
+        _db = db;
+    }
     public IActionResult Index()
     {
-        return View();
+        List<Category> objCategoryList = _db.Categories.ToList();
+        return View(objCategoryList);
     }
 }
