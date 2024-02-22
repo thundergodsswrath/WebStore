@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Store.DataAccess.Data;
 using Store.DataAccess.Repository.IRepository;
 using Store.Models;
 
-namespace Store.Controllers;
-
+namespace Store.Areas.Admin.Controllers;
+[Area("Admin")]
 public class CategoryController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
