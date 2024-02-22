@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Store.Data;
+using Store.DataAccess.Data;
+using Store.DataAccess.Repository;
+using Store.DataAccess.Repository.IRepository;
 
 namespace Store;
 
@@ -13,6 +15,7 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddDbContext<ApplicationDbContext>(options=>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         var app = builder.Build();
 
@@ -33,7 +36,7 @@ public class Program
 
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
     }

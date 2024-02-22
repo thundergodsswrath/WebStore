@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Store.Migrations
+namespace Store.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
