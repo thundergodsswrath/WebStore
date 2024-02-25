@@ -17,10 +17,10 @@ public class Product
     [DisplayName("List Price")]
     [Range(1, 1000)]
     public double ListPrice { get; set; }
-    [DisplayName("Price for 1-3")]
+    [DisplayName("Price for 1-3 copies")]
     [Range(1, 1000)]
     public double Price { get; set; }
-    [DisplayName("Price for 4+")]
+    [DisplayName("Price for 4+ copies")]
     [Range(1, 1000)]
     public double PriceFor4Copies { get; set; }
 }
