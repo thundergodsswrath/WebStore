@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Store.Models;
 
@@ -23,4 +24,8 @@ public class Product
     [DisplayName("Price for 4+ copies")]
     [Range(1, 1000)]
     public double PriceFor4Copies { get; set; }
+
+    public int CategoryId { get; set; }
+    [ForeignKey("CategoryId")]
+    public Category Category { get; set; }
 }

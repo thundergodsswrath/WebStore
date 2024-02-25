@@ -22,7 +22,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 Developer = "FromSoftware Inc.",
                 ListPrice = 45,
                 Price = 43,
-                PriceFor4Copies = 38
+                PriceFor4Copies = 38,
+                CategoryId = 1
             },
             new Product {Id = 2,
                 Title = "Cuphead",
@@ -30,7 +31,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 Developer = "Studio MDHR Entertainment Inc.",
                 ListPrice = 8,
                 Price = 6,
-                PriceFor4Copies = 5
+                PriceFor4Copies = 5,
+                CategoryId = 3
             },
             new Product {Id = 3,
                 Title = "God Of War",
@@ -38,7 +40,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 Developer = "Santa Monica Studio",
                 ListPrice = 30,
                 Price = 28,
-                PriceFor4Copies = 26
+                PriceFor4Copies = 26,
+                CategoryId = 1
             }
         );
     }
