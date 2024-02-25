@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Store.DataAccess.Repository.IRepository;
 using Store.Models;
+using Store.Models.ViewModels;
 
 namespace Store.Areas.Admin.Controllers;
 [Area("Admin")]
@@ -16,14 +18,30 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
 
     public IActionResult Create()
     {
-        return View();
+        ProductVM productVM = new()
+        {
+            CategoryList = _unitOfWork.CategoryRepository
+                .GetAll().Select(u=> new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+            Product = new Product()
+        };
+        return View(productVM);
     }
 
     [HttpPost]
-    public IActionResult Create(Product obj)
+    public IActionResult Create(ProductVM obj)
     {
-        if (!ModelState.IsValid) return View();
-        _unitOfWork.ProductRepository.Create(obj);
+        obj.CategoryList = _unitOfWork.CategoryRepository
+            .GetAll().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
+        if (!ModelState.IsValid) return View(obj);
+        _unitOfWork.ProductRepository.Create(obj.Product);
         _unitOfWork.Save();
         return RedirectToAction("Index");
     }
