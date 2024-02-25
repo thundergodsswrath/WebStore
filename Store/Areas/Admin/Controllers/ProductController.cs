@@ -47,8 +47,22 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
         _unitOfWork.Save();
         return RedirectToAction("Index");
     }
-    public IActionResult Delete()
+    public IActionResult Delete(int? id)
     {
-        return View();
+        if (id is null or 0)
+        {
+            return NotFound();
+        }
+
+        Product? productFromDb = _unitOfWork.ProductRepository.Get(u => u.Id == id);
+        if(productFromDb==null) return NotFound();
+        return View(productFromDb);
+    }
+    [HttpPost]
+    public IActionResult Delete(Product obj)
+    {
+        _unitOfWork.ProductRepository.Remove(obj);
+        _unitOfWork.Save();
+        return RedirectToAction("Index");
     }
 }
