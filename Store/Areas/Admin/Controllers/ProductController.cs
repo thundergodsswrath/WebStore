@@ -28,11 +28,25 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
         return RedirectToAction("Index");
     }
     
-    public IActionResult Edit()
+    public IActionResult Edit(int? id)
     {
-        return View();
+        if (id is null or 0)
+        {
+            return NotFound();
+        }
+
+        Product? productFromDb = _unitOfWork.ProductRepository.Get(u => u.Id == id);
+        if(productFromDb==null) return NotFound();
+        return View(productFromDb);
     }
-    
+    [HttpPost]
+    public IActionResult Edit(Product obj)
+    {
+        if (!ModelState.IsValid) return View();
+        _unitOfWork.ProductRepository.Update(obj);
+        _unitOfWork.Save();
+        return RedirectToAction("Index");
+    }
     public IActionResult Delete()
     {
         return View();
