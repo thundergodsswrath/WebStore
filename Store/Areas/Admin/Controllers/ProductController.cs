@@ -6,9 +6,10 @@ using Store.Models.ViewModels;
 
 namespace Store.Areas.Admin.Controllers;
 [Area("Admin")]
-public class ProductController(IUnitOfWork unitOfWork) : Controller
+public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment) : Controller
 {
-    private IUnitOfWork _unitOfWork { get; set; } = unitOfWork;
+    private IUnitOfWork _unitOfWork { get; } = unitOfWork;
+    private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
     public IActionResult Index()
     {
@@ -16,7 +17,7 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
         return View(objProductsList);
     }
 
-    public IActionResult Create()
+    public IActionResult Upsert(int? id)
     {
         ProductVM productVM = new()
         {
@@ -28,43 +29,64 @@ public class ProductController(IUnitOfWork unitOfWork) : Controller
                 }),
             Product = new Product()
         };
+        if (id is not (null or 0))
+        {
+            productVM.Product = _unitOfWork.ProductRepository.Get(u => u.Id == id);
+        }
         return View(productVM);
     }
 
     [HttpPost]
-    public IActionResult Create(ProductVM obj)
+    public IActionResult Upsert(ProductVM obj, IFormFile? file)
     {
-        obj.CategoryList = _unitOfWork.CategoryRepository
-            .GetAll().Select(u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
-        if (!ModelState.IsValid) return View(obj);
-        _unitOfWork.ProductRepository.Create(obj.Product);
-        _unitOfWork.Save();
-        return RedirectToAction("Index");
-    }
-    
-    public IActionResult Edit(int? id)
-    {
-        if (id is null or 0)
+        if (ModelState.IsValid)
         {
-            return NotFound();
-        }
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file is not null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string productPath = Path.Combine(wwwRootPath, @"images\product");
 
-        Product? productFromDb = _unitOfWork.ProductRepository.Get(u => u.Id == id);
-        if(productFromDb==null) return NotFound();
-        return View(productFromDb);
-    }
-    [HttpPost]
-    public IActionResult Edit(Product obj)
-    {
-        if (!ModelState.IsValid) return View();
-        _unitOfWork.ProductRepository.Update(obj);
-        _unitOfWork.Save();
-        return RedirectToAction("Index");
-    }
+                if (!string.IsNullOrEmpty(obj.Product.ImageUrl))
+                {
+                    var oldImage = Path.Combine(wwwRootPath, obj.Product.ImageUrl.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImage))
+                    {
+                        System.IO.File.Delete(oldImage);
+                    }
+                }
+                
+                using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                obj.Product.ImageUrl = @"\images\product\" + fileName;
+            }
+
+            if (obj.Product.Id == 0)
+            {
+                _unitOfWork.ProductRepository.Create(obj.Product);
+            }
+            else
+            {
+                _unitOfWork.ProductRepository.Update(obj.Product);
+            }
+            
+            _unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            obj.CategoryList = _unitOfWork.CategoryRepository
+                .GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+            return View(obj);
+        }
+    } 
     public IActionResult Delete(int? id)
     {
         if (id is null or 0)
