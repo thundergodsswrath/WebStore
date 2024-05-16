@@ -105,4 +105,11 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
         _unitOfWork.Save();
         return RedirectToAction("Index");
     }
+
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        List<Product> objProductsList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
+        return Json(new { data = objProductsList });
+    }
 }
