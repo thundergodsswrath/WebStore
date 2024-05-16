@@ -87,29 +87,30 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
             return View(obj);
         }
     } 
-    public IActionResult Delete(int? id)
-    {
-        if (id is null or 0)
-        {
-            return NotFound();
-        }
-
-        Product? productFromDb = _unitOfWork.ProductRepository.Get(u => u.Id == id);
-        if(productFromDb==null) return NotFound();
-        return View(productFromDb);
-    }
-    [HttpPost]
-    public IActionResult Delete(Product obj)
-    {
-        _unitOfWork.ProductRepository.Remove(obj);
-        _unitOfWork.Save();
-        return RedirectToAction("Index");
-    }
 
     [HttpGet]
     public IActionResult GetAll()
     {
         List<Product> objProductsList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
         return Json(new { data = objProductsList });
+    }
+    public IActionResult Delete(int? id)
+    {
+        var product = _unitOfWork.ProductRepository.Get(u => u.Id == id);
+        if (product is null)
+        {
+            return Json(new { success = false, message = "Error while deleting" });
+        }
+        
+        var oldImage = Path.Combine(_webHostEnvironment.WebRootPath, product.ImageUrl.TrimStart('\\'));
+        if (System.IO.File.Exists(oldImage))
+        {
+            System.IO.File.Delete(oldImage);
+        }
+        
+        _unitOfWork.ProductRepository.Remove(product);
+        _unitOfWork.Save();
+        
+        return Json(new { success = true, message = "Delete successful!" });
     }
 }
