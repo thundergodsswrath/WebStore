@@ -94,6 +94,7 @@ public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHo
         List<Product> objProductsList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
         return Json(new { data = objProductsList });
     }
+    [HttpDelete]
     public IActionResult Delete(int? id)
     {
         var product = _unitOfWork.ProductRepository.Get(u => u.Id == id);
