@@ -21,6 +21,12 @@ public class HomeController : Controller
         IEnumerable<Product> productList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category");
         return View(productList);
     }
+    
+    public IActionResult Details(int productId)
+    {
+        Product product= _unitOfWork.ProductRepository.Get(u=>u.Id == productId, includeProperties:"Category");
+        return View(product);
+    }
 
     public IActionResult Privacy()
     {

@@ -11,6 +11,7 @@
                         <div class="card-body pb-0">
                             <div class="pl-1">
                                 <p class="card-title h4 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
+                                <p class="card-title h6 text-dark opacity-75 text-uppercase text-center">@product.Category.Name</p>
                                 <p class="card-title text-warning text-center">by <b>@product.Developer</b></p>
                             </div>
                             <div class="pl-1">
@@ -28,7 +29,7 @@
                                 </p>
                             </div>
                             <div>
-                                <a href="#" class="btn btn-primary border-0 form-control">Details</a>
+                                <a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-primary border-0 form-control">Details</a>
                             </div>
                         </div>
                     </div>
