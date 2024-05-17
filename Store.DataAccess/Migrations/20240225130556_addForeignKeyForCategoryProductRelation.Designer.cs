@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Store.DataAccess.Data;
 
@@ -10,9 +11,11 @@ using Store.DataAccess.Data;
 namespace Store.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240225130556_addForeignKeyForCategoryProductRelation")]
+    partial class addForeignKeyForCategoryProductRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,10 +84,6 @@ namespace Store.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
 
@@ -112,7 +111,6 @@ namespace Store.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "THE NEW FANTASY ACTION RPG. Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between.",
                             Developer = "FromSoftware Inc.",
-                            ImageUrl = "",
                             ListPrice = 45.0,
                             Price = 43.0,
                             PriceFor4Copies = 38.0,
@@ -124,7 +122,6 @@ namespace Store.DataAccess.Migrations
                             CategoryId = 3,
                             Description = "Cuphead is a classic run and gun action game heavily focused on boss battles. Inspired by cartoons of the 1930s, the visuals and audio are painstakingly created with the same techniques of the era, i.e. traditional hand drawn cel animation, watercolor backgrounds, and original jazz recordings.",
                             Developer = "Studio MDHR Entertainment Inc.",
-                            ImageUrl = "",
                             ListPrice = 8.0,
                             Price = 6.0,
                             PriceFor4Copies = 5.0,
@@ -136,7 +133,6 @@ namespace Store.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "His vengeance against the Gods of Olympus years behind him, Kratos now lives as a man in the realm of Norse Gods and monsters. It is in this harsh, unforgiving world that he must fight to survive… and teach his son to do the same.",
                             Developer = "Santa Monica Studio",
-                            ImageUrl = "",
                             ListPrice = 30.0,
                             Price = 28.0,
                             PriceFor4Copies = 26.0,
