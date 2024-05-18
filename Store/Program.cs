@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Store.DataAccess.Data;
 using Store.DataAccess.Repository;
 using Store.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 
 namespace Store;
 
@@ -15,6 +16,8 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddDbContext<ApplicationDbContext>(options=>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         var app = builder.Build();
@@ -31,7 +34,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(
