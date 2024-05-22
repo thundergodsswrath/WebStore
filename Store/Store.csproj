@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Store.DataAccess\Store.DataAccess.csproj" />
+      <ProjectReference Include="..\Store.Utility\Store.Utility.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Store.DataAccess.Repository.IRepository;
 using Store.Models;
 using Store.Models.ViewModels;
+using Store.Utility;
 
 namespace Store.Areas.Admin.Controllers;
 [Area("Admin")]
+[Authorize(Roles = StaticDetails.RoleAdmin)]
 public class ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment) : Controller
 {
     private IUnitOfWork _unitOfWork { get; } = unitOfWork;
