@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Store.DataAccess.Repository.IRepository;
 using Store.Models;
+using Store.Utility;
 
 namespace Store.Areas.Admin.Controllers;
 [Area("Admin")]
+[Authorize(Roles = StaticDetails.RoleAdmin)]
 public class CategoryController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
