@@ -14,11 +14,13 @@ public class UnitOfWork : IUnitOfWork
         CategoryRepository = new CategoryRepository(_db);
         ProductRepository = new ProductRepository(_db);
         ShoppingCartRepository = new ShoppingCartRepository(_db);
+        ApplicationUserRepository = new ApplicationUserRepository(_db);
     }
     
     public ICategoryRepository CategoryRepository { get; private set; }
     public IProductRepository ProductRepository { get; private set; }
     public IShoppingCartRepository ShoppingCartRepository { get; private set; }
+    public IApplicationUserRepository ApplicationUserRepository { get; private set; }
     public void Save()
     {
         _db.SaveChanges();
