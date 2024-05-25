@@ -48,6 +48,15 @@
                             </ul>
                         </li>
                     }
+                    
+                    @if (User.IsInRole(StaticDetails.RoleAdmin) || User.IsInRole(StaticDetails.RoleCustomer) || User.IsInRole(StaticDetails.RoleEmployee))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-bag"></i> (0)
+                            </a>
+                        </li>
+                    }
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
