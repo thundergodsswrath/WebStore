@@ -27,13 +27,14 @@ public class CartController : Controller
         ShoppingCartVM = new()
         {
             ShoppingCartList = _unitOfWork.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == userId,
-                includeProperties: "Product")
+                includeProperties: "Product"),
+                OrderHeader = new()
         };
 
         foreach (var cart in ShoppingCartVM.ShoppingCartList)
         {
             cart.Price = GetPriceBasedOnQuantity(cart);
-            ShoppingCartVM.OrderTotal += cart.Price * cart.Count;
+            ShoppingCartVM.OrderHeader.OrderTotal += cart.Price * cart.Count;
         }
 
         return View(ShoppingCartVM);
@@ -72,6 +73,11 @@ public class CartController : Controller
         _unitOfWork.ShoppingCartRepository.Remove(cartFromDb);
         _unitOfWork.Save();
         return RedirectToAction(nameof(Index));
+    }
+
+    public IActionResult Summary()
+    {
+        return View();
     }
 
     private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
