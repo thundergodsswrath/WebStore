@@ -6,6 +6,9 @@ public interface IUnitOfWork
     IProductRepository ProductRepository { get; }
     IShoppingCartRepository ShoppingCartRepository { get; }
     IApplicationUserRepository ApplicationUserRepository { get; }
+    
+    IOrderHeaderRepository OrderHeaderRepository { get; }
+    IOrderDetailRepository OrderDetailRepository { get; }
 
     void Save();
 }
