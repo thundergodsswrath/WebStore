@@ -66,6 +66,14 @@ public class OrderController : Controller
 
         return RedirectToAction(nameof(Details), new { orderId = orderHeaderFromDb.Id });
     }
+    
+    [HttpPost]
+    [Authorize(Roles = StaticDetails.RoleAdmin + "," + StaticDetails.RoleEmployee)]
+    public IActionResult StartProcessing() {
+        _unitOfWork.OrderHeaderRepository.UpdateStatus(OrderVM.OrderHeader.Id, StaticDetails.StatusInProcess);
+        _unitOfWork.Save();
+        return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+    }
 
     [HttpGet]
     public IActionResult GetAll(string status)
