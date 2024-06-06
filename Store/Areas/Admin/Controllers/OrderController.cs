@@ -74,6 +74,21 @@ public class OrderController : Controller
         _unitOfWork.Save();
         return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
     }
+    
+    [HttpPost]
+    [Authorize(Roles = StaticDetails.RoleAdmin + "," + StaticDetails.RoleEmployee)]
+    public IActionResult ShipOrder() {
+
+        var orderHeader = _unitOfWork.OrderHeaderRepository.Get(u => u.Id == OrderVM.OrderHeader.Id);
+        orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+        orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
+        orderHeader.OrderStatus = StaticDetails.StatusShipped;
+        orderHeader.ShippingDate = DateTime.Now;
+
+        _unitOfWork.OrderHeaderRepository.Update(orderHeader);
+        _unitOfWork.Save();
+        return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+    }
 
     [HttpGet]
     public IActionResult GetAll(string status)
