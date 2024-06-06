@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Store.DataAccess.Repository.IRepository;
 using Store.Models;
+using Store.Models.ViewModels;
 using Store.Utility;
 
 namespace Store.Areas.Admin.Controllers;
@@ -11,6 +13,7 @@ namespace Store.Areas.Admin.Controllers;
 public class OrderController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    public OrderVM OrderVM { get; set; }
     
     public OrderController(IUnitOfWork unitOfWork)
     {
@@ -21,11 +24,31 @@ public class OrderController : Controller
     {
         return View();
     }
+    
+    public IActionResult Details(int orderId) {
+        OrderVM = new() {
+            OrderHeader = _unitOfWork.OrderHeaderRepository.Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+            OrderDetail = _unitOfWork.OrderDetailRepository.GetAll(u => u.OrderHeaderId == orderId, includeProperties: "Product")
+        };
+
+        return View(OrderVM);
+    }
 
     [HttpGet]
     public IActionResult GetAll(string status)
     {
         IEnumerable<OrderHeader> objOrderHeaders = _unitOfWork.OrderHeaderRepository.GetAll(includeProperties: "ApplicationUser").ToList();
+        
+        if(User.IsInRole(StaticDetails.RoleAdmin)|| User.IsInRole(StaticDetails.RoleEmployee)) {
+            objOrderHeaders = _unitOfWork.OrderHeaderRepository.GetAll(includeProperties: "ApplicationUser").ToList();
+        }
+        else {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            objOrderHeaders = _unitOfWork.OrderHeaderRepository
+                .GetAll(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
+        }
         
         switch (status) {
             case "pending":
