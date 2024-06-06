@@ -5,6 +5,7 @@ using Store.DataAccess.Repository.IRepository;
 using Store.Models;
 using Store.Models.ViewModels;
 using Store.Utility;
+using Stripe;
 
 namespace Store.Areas.Admin.Controllers;
 
@@ -89,6 +90,32 @@ public class OrderController : Controller
         _unitOfWork.Save();
         return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
     }
+    
+    [HttpPost]
+    [Authorize(Roles = StaticDetails.RoleAdmin + "," + StaticDetails.RoleEmployee)]
+    public IActionResult CancelOrder() {
+
+        var orderHeader = _unitOfWork.OrderHeaderRepository.Get(u => u.Id == OrderVM.OrderHeader.Id);
+
+        if (orderHeader.PaymentStatus == StaticDetails.PaymentStatusApproved) {
+            var options = new RefundCreateOptions {
+                Reason = RefundReasons.RequestedByCustomer,
+                PaymentIntent = orderHeader.PaymentIntentId
+            };
+
+            var service = new RefundService();
+            Refund refund = service.Create(options);
+
+            _unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeader.Id, StaticDetails.StatusCanceled, StaticDetails.StatusRefunded);
+        }
+        else {
+            _unitOfWork.OrderHeaderRepository.UpdateStatus(orderHeader.Id, StaticDetails.StatusCanceled, StaticDetails.StatusCanceled);
+        }
+        _unitOfWork.Save();
+        return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+
+    }
+
 
     [HttpGet]
     public IActionResult GetAll(string status)
